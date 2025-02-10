@@ -45,7 +45,8 @@ while running:
     player.update(dt)
     if pygame.key.get_pressed()[pygame.K_SPACE]:
         shot = player.shoot()
-        shots.append(shot)  # Don't forget to append the new shot!
+        if shot is not None:  # Only append if a shot was actually created
+            shots.append(shot)
     
     # Update shots
     for shot in shots:
