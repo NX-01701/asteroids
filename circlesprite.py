@@ -1,13 +1,14 @@
 import pygame
 
-class circle_shape(pygame.sprite.Sprite):
-    def __init__(self, groups, x, y, radius):
-        super().__init__(groups)  # Adds itself to given sprite groups
-        self.image = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
-        self.rect = self.image.get_rect(center=(x, y))
+class CircleShape:
+    def __init__(self, x, y, radius):
+        self.position = pygame.Vector2(x, y)
         self.radius = radius
-        self.velocity = pygame.Vector2(0, 0)
+        # Add a rect for collision detection
+        self.rect = pygame.Rect(x - radius, y - radius, radius * 2, radius * 2)
 
     def update(self, dt):
-        self.rect.x += self.velocity.x * dt
-        self.rect.y += self.velocity.y * dt
+        # Update rect position when the shape moves
+        self.rect.centerx = self.position.x
+        self.rect.centery = self.position.y
+   

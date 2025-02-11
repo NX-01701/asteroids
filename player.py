@@ -23,6 +23,7 @@ class Player(CircleShape):
         return [a, b, c]
 
     def update(self, dt):
+        super().update(dt)  # Add this line
         self.timer = max(0, self.timer - dt)
         keys = pygame.key.get_pressed()
 
@@ -42,6 +43,9 @@ class Player(CircleShape):
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         self.position += forward * PLAYER_SPEED * dt
+        # Update rect position after moving
+        self.rect.centerx = self.position.x
+        self.rect.centery = self.position.y
 
     def shoot(self):
         current_time = pygame.time.get_ticks()

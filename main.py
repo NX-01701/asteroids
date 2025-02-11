@@ -6,7 +6,8 @@ from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 # Initialize Pygame
 pygame.init()
-
+game_over = False
+font = pygame.font.Font(None, 74)
 # Create the game window
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
@@ -41,30 +42,46 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # Update game objects
-    player.update(dt)
-    if pygame.key.get_pressed()[pygame.K_SPACE]:
-        shot = player.shoot()
-        if shot is not None:
-            shots.add(shot)  # Use add() instead of append()
+    # Only update game if not game_over
+    if not game_over:  # Add this check
+        # Update game objects (unindent these from the event loop)
+        player.update(dt)
+        if pygame.key.get_pressed()[pygame.K_SPACE]:
+            shot = player.shoot()
+            if shot is not None:
+                shots.add(shot)
 
-    # Update sprite groups
-    asteroids.update(dt)
-    shots.update(dt)
+        # Update sprite groups (unindent these from the event loop)
+        asteroids.update(dt)
+        shots.update(dt)
 
-    # Check collisions
-    for asteroid in asteroids:
-        for shot in shots:
-            if asteroid.rect.colliderect(shot.rect):
-                print("Collision detected!")  # Debug print
-                asteroid.kill()
-                shot.kill()
-    # Draw everything
+        # Check collisions (unindent these from the event loop)
+        for asteroid in asteroids:
+            # Check player collision
+            if asteroid.rect.colliderect(player.rect):
+                game_over = True
+                break
+            
+            # Check shot collisions
+            for shot in shots:
+                if asteroid.rect.colliderect(shot.rect):
+                    new_asteroids = asteroid.split()
+                    if new_asteroids:
+                        asteroids.add(new_asteroids)
+                    shot.kill()
+
+    # Draw everything (this stays at the same indentation level as while loop)
     screen.fill("black")
     player.draw(screen)
     asteroids.draw(screen)
     shots.draw(screen)
+
+    # Draw game over text if game is over
+    if game_over:
+        text = font.render('Game Over', True, (255, 0, 0))
+        text_rect = text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+        screen.blit(text, text_rect)
+
     pygame.display.flip()
     
-
 pygame.quit()
