@@ -1,13 +1,18 @@
 import pygame
 from constants import SHOT_RADIUS
 from circle_shape import CircleShape
-class Shot(CircleShape):
-    def __init__(self, position):
-        super().__init__(position.x, position.y, SHOT_RADIUS)  
-        self.velocity = pygame.Vector2(0, 0)
+class Shot(pygame.sprite.Sprite):
+    def __init__(self, x, y, velocity):
+        super().__init__()
+        # Create a small surface for the bullet
+        self.image = pygame.Surface((4, 4), pygame.SRCALPHA)
+        pygame.draw.circle(self.image, 'white', (2, 2), 2)
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
         
-    def draw(self, screen):
-        pygame.draw.circle(screen, "white", self.position, self.radius)
-        
-    def update(self, delta_time):
-        self.position += self.velocity * delta_time
+        self.position = pygame.Vector2(x, y)
+        self.velocity = velocity
+
+    def update(self, dt):
+        self.position += self.velocity * dt
+        self.rect.center = self.position

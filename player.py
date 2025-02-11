@@ -7,6 +7,9 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.timer = 0
+        # Add these new lines
+        self.last_shot_time = 0
+        self.shoot_delay = PLAYER_SHOOT_COOLDOWN  
 
     def draw(self, screen):
         pygame.draw.polygon(screen, "white", self.triangle(), 2)
@@ -41,11 +44,12 @@ class Player(CircleShape):
         self.position += forward * PLAYER_SPEED * dt
 
     def shoot(self):
-        if self.timer <= 0:
-            self.timer = PLAYER_SHOOT_COOLDOWN
-            new_shot = Shot(self.position.copy())   
-            direction = pygame.Vector2(0, 1)       
-            direction = direction.rotate(self.rotation)  
-            new_shot.velocity = direction * PLAYER_SHOOT_SPEED
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_shot_time >= self.shoot_delay:
+            self.last_shot_time = current_time
+            # Use rotation to determine shot direction
+            direction = pygame.Vector2(0, 1).rotate(self.rotation)
+            shot_velocity = direction * PLAYER_SHOOT_SPEED  # Use the constant
+            new_shot = Shot(self.position.x, self.position.y, shot_velocity)
             return new_shot
         return None
